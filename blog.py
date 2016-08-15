@@ -10,9 +10,9 @@ conn = sqlite3.connect("posts.db")
 def blog():
     result = []
     cursor = conn.cursor()
-    cursor.execute("SELECT post FROM blogposts")
-    for (post,) in cursor.fetchall():
-        result.append(post)
+    cursor.execute("SELECT title, post, date FROM blogposts")
+    for (title, post, date,) in cursor.fetchall():
+        result.append((title, post, date))
 
     return render_template("index.html", content=result)
 

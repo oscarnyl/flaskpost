@@ -8,8 +8,10 @@
     <body>
         <h1>Blog!</h1>
         <div id="content">
-        {% for item in content %}
-            {{ item }}<br/>
+        {% for (title, post, date) in content %}
+        <h3>{{ title }}</h3><br/>
+        {{ post }}<br/><br/>
+        <h6>Posted {{ date }}</h6><br/>
         {% endfor %}
         </div>
     </body>
