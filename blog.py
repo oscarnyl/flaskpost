@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sqlite3
-from flask import Flask
+from flask import Flask, render_template
 app = Flask(__name__)
 
 conn = sqlite3.connect("posts.db")
@@ -12,9 +12,9 @@ def blog():
     cursor = conn.cursor()
     cursor.execute("SELECT post FROM blogposts")
     for (post,) in cursor.fetchall():
-        result.append(post + "<br>\n")
+        result.append(post)
 
-    return "".join(result)
+    return render_template("index.html", content=result)
 
 if __name__ == "__main__":
     app.run()
