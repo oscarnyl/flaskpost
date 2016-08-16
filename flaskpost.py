@@ -36,13 +36,16 @@ def api_setup():
     global needs_setup
     global conn
     global blog_title_global
+
     #TODO: Replace this with a login system
     if not needs_setup:
         abort(403) # No setup is actually needed. Abort mission.
+
     blog_title_local = request.form["blog_title"]
     admin_username = request.form["admin_username"]
     admin_password = request.form["admin_password"]
     password_hash = sha256_crypt.encrypt(admin_password)
+
     conn = sqlite3.connect(DATABASE_NAME)
     cursor = conn.cursor()
     cursor.executescript("""
@@ -57,6 +60,7 @@ def api_setup():
     cursor.execute("INSERT INTO metadata (key, value) VALUES (?, ?)",
     ("blog_title", blog_title_local,))
     blog_title_global = blog_title_local
+
     conn.commit()
     needs_setup = False
     return redirect("/")
@@ -69,13 +73,16 @@ def api_post():
     #TODO: Disallow access for unauthorized users
     if needs_setup:
         return redirect("/setup")
+
     title = request.form["title"]
     postbody = request.form["postbody"]
     timestamp = datetime.datetime.now()
+
     cursor = conn.cursor()
     cursor.execute("INSERT INTO blogposts (title, post, date) VALUES (?, ?, ?)",
             (title, postbody, timestamp,))
     conn.commit()
+
     return redirect("/")
 
 """ Gets all blog-posts from database, then places them into a template. """
@@ -83,6 +90,7 @@ def api_post():
 def blog_main():
     if needs_setup:
         return redirect("/setup")
+
     result = []
     cursor = conn.cursor()
     cursor.execute("SELECT title, post, date FROM blogposts")
@@ -98,6 +106,7 @@ def blog_post():
     #TODO: Disallow access for unauthorized users
     if needs_setup:
         return redirect("/setup")
+
     return render_template("post.html", blog_title=blog_title_global)
 
 if __name__ == "__main__":
