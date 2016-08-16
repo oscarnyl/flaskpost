@@ -3,6 +3,7 @@ A simple blog created with Flask. Utilizes sqlite3 for storage.
 
 ## Prerequisites
 * Flask (can be installed through pip: "pip install Flask"
+* passlib (can be installed through pip: "pip install passlib"
 
 ## Usage
 1. Clone the repo
