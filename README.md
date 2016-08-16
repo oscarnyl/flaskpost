@@ -1,6 +1,9 @@
 # flaskpost
 A simple blog created with Flask. Utilizes sqlite3 for storage.
 
+## Prerequisites
+* Flask (can be installed through pip: "pip install Flask"
+
 ## Usage
 1. Clone the repo
 2. Run "./blog.py" in your terminal
