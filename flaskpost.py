@@ -56,7 +56,7 @@ def api_setup():
             (admin_username, password_hash,))
     cursor.execute("INSERT INTO metadata (key, value) VALUES (?, ?)",
     ("blog_title", blog_title_local,))
-    blog_title = blog_title_local
+    blog_title_global = blog_title_local
     conn.commit()
     needs_setup = False
     return redirect("/")
