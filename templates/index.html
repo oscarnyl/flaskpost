@@ -8,7 +8,7 @@
     </head>
     <body>
         <a href="/">Main</a> - <a href="/post">Post</a>
-        <h1>Blog!</h1>
+        <h1>{{ blog_title }}</h1>
         <div id="content">
         {% for (title, post, date) in content %}
         <h3>{{ title }}</h3><br/>
