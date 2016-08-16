@@ -2,14 +2,49 @@
 
 import sqlite3
 import datetime
-from flask import Flask, render_template, request, redirect
+import os
+from flask import Flask, render_template, request, redirect, abort
 app = Flask(__name__)
 
-conn = sqlite3.connect("posts.db")
+needs_setup = False
+conn = None
 
-""" Inserts a post into the database, then redirects to the blog front page. """
+# If the database does not exist, setup needs to be done.
+if not os.path.isfile("posts.db"):
+    needs_setup = True
+else:
+    conn = sqlite3.connect("posts.db")
+
+""" Serves the setup page. This page will in turn call "/api/setup". """
+@app.route("/setup")
+def setup():
+    if not needs_setup:
+        abort(403) # No setup is actually needed. Abort mission.
+    return render_template("setup.html")
+
+""" Saves settings into config file, then sets up database. """
+@app.route("/api/setup", methods=["POST"])
+def api_setup():
+    global needs_setup
+    global conn
+    if not needs_setup:
+        abort(403) # No setup is actually needed. Abort mission.
+    blog_title = request.form["blog_title"]
+    conn = sqlite3.connect("posts.db")
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE blogposts (id INT PRIMARY KEY, title "
+    "TEXT NOT NULL, post TEXT NOT NULL, date TEXT NOT NULL)")
+    conn.commit()
+    needs_setup = False
+    return redirect("/")
+
+""" Inserts a post into the database, then redirects to the blog front page.
+    Blogpost data is retrieved through a web form (served at /post), with a
+    timestamp generated inside the function. """
 @app.route("/api/post", methods=["POST"])
 def api_post():
+    if needs_setup:
+        return redirect("/setup")
     title = request.form["title"]
     postbody = request.form["postbody"]
     timestamp = datetime.datetime.now()
@@ -22,6 +57,8 @@ def api_post():
 """ Gets all blog-posts from database, then places them into a template. """
 @app.route("/")
 def blog_main():
+    if needs_setup:
+        return redirect("/setup")
     result = []
     cursor = conn.cursor()
     cursor.execute("SELECT title, post, date FROM blogposts")
@@ -33,6 +70,8 @@ def blog_main():
 """ Serves a page where blog posts can be inserted into the database. """
 @app.route("/post")
 def blog_post():
+    if needs_setup:
+        return redirect("/setup")
     return render_template("post.html")
 
 if __name__ == "__main__":
