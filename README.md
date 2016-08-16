@@ -17,5 +17,10 @@ A simple blog created with Flask. Utilizes sqlite3 for storage.
 2. Require authorization from said login system to make posts
 3. Expand setup and make it work properly
 
+## A warning that must be heeded
+Do not deploy flaskpost without HTTPS. It will in its current state transmit
+password on setup and login in plaintext, which is not good if you're not
+running it over HTTPS.
+
 ## License
 MIT License. See LICENSE-file.
