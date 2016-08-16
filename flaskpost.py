@@ -20,7 +20,7 @@ else:
     conn = sqlite3.connect(DATABASE_NAME)
     cursor = conn.cursor()
     cursor.execute("SELECT value FROM metadata WHERE key='blog_title'")
-    (blog_title,) = cursor.fetchone()
+    (blog_title_global,) = cursor.fetchone()
 
 """ Serves the setup page. This page will in turn call "/api/setup". """
 @app.route("/setup")
