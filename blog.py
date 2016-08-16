@@ -18,6 +18,7 @@ else:
 """ Serves the setup page. This page will in turn call "/api/setup". """
 @app.route("/setup")
 def setup():
+    #TODO: Replace this with a login system
     if not needs_setup:
         abort(403) # No setup is actually needed. Abort mission.
     return render_template("setup.html")
@@ -27,6 +28,7 @@ def setup():
 def api_setup():
     global needs_setup
     global conn
+    #TODO: Replace this with a login system
     if not needs_setup:
         abort(403) # No setup is actually needed. Abort mission.
     blog_title = request.form["blog_title"]
@@ -43,6 +45,7 @@ def api_setup():
     timestamp generated inside the function. """
 @app.route("/api/post", methods=["POST"])
 def api_post():
+    #TODO: Disallow access for unauthorized users
     if needs_setup:
         return redirect("/setup")
     title = request.form["title"]
@@ -70,6 +73,7 @@ def blog_main():
 """ Serves a page where blog posts can be inserted into the database. """
 @app.route("/post")
 def blog_post():
+    #TODO: Disallow access for unauthorized users
     if needs_setup:
         return redirect("/setup")
     return render_template("post.html")
