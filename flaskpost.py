@@ -13,8 +13,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/flaskpost.db"
 db = SQLAlchemy(app)
 db.create_all()
 
-# If the database does not exist, setup needs to be done.
-
 """ Serves the setup page. This page will in turn call "/api/setup". """
 @app.route("/setup")
 def setup():
