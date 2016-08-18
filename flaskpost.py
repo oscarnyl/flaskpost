@@ -13,6 +13,7 @@ app = Flask(__name__)
 app.secret_key = "You should change this before using flaskpost."
 #TODO: Find better home for database file?
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/flaskpost.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 db.create_all()
 login_manager = LoginManager()
@@ -66,7 +67,6 @@ def api_setup():
 @app.route("/api/post", methods=["POST"])
 @login_required
 def api_post():
-    #TODO: Access only for authorized users
     title = request.form["title"]
     postbody = request.form["postbody"]
 
@@ -102,9 +102,9 @@ def blog_main():
 def blog_post():
     if needs_setup:
         return redirect("/setup")
-    #TODO: Access only for authorized users
     return render_template("post.html", blog_title=blog_title_global)
 
+""" ORM Representation of a Blogpost.  """
 class Blogpost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
@@ -116,6 +116,7 @@ class Blogpost(db.Model):
         self.post = post
         self.date = datetime.datetime.now()
 
+""" ORM Representation of a Metadata Key-Value pair. """
 class Metadata(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.Text, nullable=False)
@@ -125,6 +126,8 @@ class Metadata(db.Model):
         self.key = key
         self.value = value
 
+""" ORM Representation of a User, with a UserMixin to allow compatibility with
+    Flask-Login. """
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Text, nullable=False, unique=True)
@@ -132,13 +135,12 @@ class User(db.Model, UserMixin):
 
     def __init__(self, username, password, active):
         self.username = username
+        # Passwords get stored as salted hashes.
         self.password = sha256_crypt.encrypt(password)
-        #TODO: Set up properties?
 
 if __name__ == "__main__":
     # If setup_reverse_canary is not present, this evaluates to true.
     needs_setup = (Metadata.query.filter_by(key="setup_reverse_canary").first() == None)
-    print("DEBUG: needs_setup = {}".format(needs_setup))
     if not needs_setup:
         blog_title_global =\
         Metadata.query.filter_by(key="blog_title").first().value
