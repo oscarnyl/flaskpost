@@ -19,10 +19,12 @@ db.create_all()
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+""" Flask-Login needs this to load users properly. """
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
 
+""" Checks credentials, then logs in user if correct. """
 @app.route("/api/login", methods=["POST"])
 def api_login():
     username = request.form["username"]
@@ -35,6 +37,7 @@ def api_login():
     else:
         return abort(401)
 
+""" Logs out the currently logged in user. """
 @app.route("/api/logout")
 @login_required
 def api_logout():
@@ -75,6 +78,7 @@ def api_post():
 
     return redirect("/")
 
+""" Serves a page where users can log in. """
 @app.route("/login")
 def login():
     return render_template("login.html", blog_title=blog_title_global)
