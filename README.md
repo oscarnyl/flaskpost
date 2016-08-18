@@ -2,10 +2,14 @@
 A simple blog created with Flask. Utilizes sqlite3 for storage.
 
 ## Prerequisites
-* Flask (can be installed through pip: "pip install Flask"
-* Flask-Login (can be installed through pip: "pip install Flask-Login")
-* Flask-SQLAlchemy (can be installed through pip: "pip install Flask-SQLAlchemy)
-* passlib (can be installed through pip: "pip install passlib")
+* Flask - the web framework
+* Flask-Login - provides user session management
+* Flask-SQLAlchemy - ORM
+* passlib - provides hashing for passwords
+
+All of the above can be installed through pip:
+
+    pip install <module>
 
 ## Usage
 1. Clone the repo
@@ -17,9 +21,10 @@ A simple blog created with Flask. Utilizes sqlite3 for storage.
 
 ## List of things that needs to be done
 1. Wrap SQL with SQLAlchemy (done)
-2. Add a login system (On hold)
-3. Require authorization from said login system to make posts (On hold)
-4. Expand setup and make it work properly (Half-done)
+2. Add a login system (done)
+3. Require authorization from said login system to make posts (done)
+4. Expand setup and make it work properly (done)
+5. Make the entire thing look better
 
 ## A warning that must be heeded
 Do not deploy flaskpost without HTTPS. It will in its current state transmit
