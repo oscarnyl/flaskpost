@@ -6,17 +6,39 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import sha256_crypt
 from flask import Flask, render_template, request, redirect, abort
+from flask_login import (LoginManager, UserMixin, login_required, login_user,
+        logout_user)
 
 app = Flask(__name__)
+app.secret_key = "You should change this before using flaskpost."
 #TODO: Find better home for database file?
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/flaskpost.db"
 db = SQLAlchemy(app)
 db.create_all()
+login_manager = LoginManager()
+login_manager.init_app(app)
 
-""" Serves the setup page. This page will in turn call "/api/setup". """
-@app.route("/setup")
-def setup():
-    return render_template("setup.html", blog_title="Setup")
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+@app.route("/api/login", methods=["POST"])
+def api_login():
+    username = request.form["username"]
+    password = request.form["password"]
+
+    user = User.query.filter_by(username=username).first()
+    if sha256_crypt.verify(password, user.password):
+        login_user(user)
+        return redirect("/")
+    else:
+        return abort(401)
+
+@app.route("/api/logout")
+@login_required
+def api_logout():
+    logout_user()
+    return redirect("/")
 
 """ Saves settings to database metadata table, then redirects to main. """
 @app.route("/api/setup", methods=["POST"])
@@ -42,6 +64,7 @@ def api_setup():
     Blogpost data is retrieved through a web form (served at /post), with a
     timestamp generated inside the function. """
 @app.route("/api/post", methods=["POST"])
+@login_required
 def api_post():
     #TODO: Access only for authorized users
     title = request.form["title"]
@@ -51,6 +74,15 @@ def api_post():
     db.session.commit()
 
     return redirect("/")
+
+@app.route("/login")
+def login():
+    return render_template("login.html", blog_title=blog_title_global)
+
+""" Serves the setup page. This page will in turn call "/api/setup". """
+@app.route("/setup")
+def setup():
+    return render_template("setup.html", blog_title="Setup")
 
 """ Gets all blog-posts from database, then serves them in a page. """
 @app.route("/")
@@ -66,6 +98,7 @@ def blog_main():
 
 """ Serves a page where blog posts can be inserted into the database. """
 @app.route("/post")
+@login_required
 def blog_post():
     if needs_setup:
         return redirect("/setup")
@@ -92,12 +125,12 @@ class Metadata(db.Model):
         self.key = key
         self.value = value
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.Text, nullable=False)
+    username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, active):
         self.username = username
         self.password = sha256_crypt.encrypt(password)
         #TODO: Set up properties?
