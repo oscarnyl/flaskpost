@@ -24,7 +24,8 @@ All of the above can be installed through pip:
 2. Add a login system (done)
 3. Require authorization from said login system to make posts (done)
 4. Expand setup and make it work properly (done)
-5. Make the entire thing look better
+5. Add "staggered" post loading
+6. Make the entire thing look better
 
 ## A warning that must be heeded
 Do not deploy flaskpost without HTTPS. It will in its current state transmit
