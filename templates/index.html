@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ blog_title }}</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static',
-        filename='styles/style.css')}}" />
-    </head>
-    <body>
-        <a href="/">Main</a> - <a href="/post">Post</a>
-        <h1>{{ blog_title }}</h1>
-        <div id="content">
-        {% for (title, post, date) in content %}
-        <h3>{{ title }}</h3><br/>
-        {{ post }}<br/><br/>
-        <h6>Posted {{ date }}</h6><br/>
-        {% endfor %}
-        </div>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block title %}{{ blog_title_global }}{% endblock %}
+{% block content %}
+{% for (title, post, date) in content %}
+<h3>{{ title }}</h3><br/>
+{{ post }}<br/><br/>
+<h6>Posted {{ date }}</h6><br/>
+{% endfor %}
+{% endblock %}

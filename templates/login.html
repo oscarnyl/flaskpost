@@ -1,22 +1,13 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ blog_title }}</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static',
-        filename='styles/style.css')}}" />
-    </head>
-    <body>
-        <a href="/">Main</a> - <a href="/post">Post</a> <a href="/login">Login</a>
-        <h1>{{ blog_title }}</h1>
-        <form action="/api/login" method="post">
-            <label>Username:
-                <input type="text" name="username" id="username" />
-            </label><br/>
-            <label>Password:
-                <input type="password" name="password" id="password" />
-            </label><br/>
-            <input type="submit" value="Login" />
-        </form>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block title %}{{ blog_title_global }}{% endblock %}
+{% block content %}
+<form action="/api/login" method="post">
+    <label>Username:
+    <input type="text" name="username" id="username" />
+    </label><br/>
+    <label>Password:
+    <input type="password" name="password" id="password" />
+    </label><br/>
+    <input type="submit" value="Login" />
+</form>
+{% endblock %}
