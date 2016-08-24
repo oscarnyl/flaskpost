@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block title %}{{ blog_title_global }}{% endblock %}
 {% block content %}
-{% for (title, post, date) in content %}
+{% for (id, title, post, date) in content %}
 <h3>{{ title }}</h3><br/>
 {{ post }}<br/><br/>
-<h6>Posted {{ date }}</h6><br/>
+<h6>Post #{{ id }}. Posted {{ date }}</h6><br/>
 {% endfor %}
 {% endblock %}
