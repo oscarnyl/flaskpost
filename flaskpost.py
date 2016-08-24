@@ -3,9 +3,10 @@
 import sqlite3
 import datetime
 import os
+from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import sha256_crypt
-from flask import Flask, render_template, request, redirect, abort
+from flask import Flask, render_template, request, redirect, abort, current_app
 from flask_login import (LoginManager, UserMixin, login_required, login_user,
         logout_user)
 
@@ -19,6 +20,20 @@ db.create_all()
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+""" Decorator to force SSL on certain requests.
+    Source: http://flask.pocoo.org/snippets/93 """
+def ssl_required(function):
+    @wraps(function)
+    def decorated_view(*args, **kwargs):
+        if current_app.config.get("SSL"):
+            if request.is_secure:
+                return function(*args, **kwargs)
+            else:
+                return redirect(request.url.replace("http://", "https://"))
+
+        return function(*args, **kwargs)
+    return decorated_view
+
 """ Flask-Login needs this to load users properly. """
 @login_manager.user_loader
 def load_user(user_id):
@@ -26,6 +41,7 @@ def load_user(user_id):
 
 """ Checks credentials, then logs in user if correct. """
 @app.route("/api/login", methods=["POST"])
+@ssl_required
 def api_login():
     username = request.form["username"]
     password = request.form["password"]
@@ -46,6 +62,7 @@ def api_logout():
 
 """ Saves settings to database metadata table, then redirects to main. """
 @app.route("/api/setup", methods=["POST"])
+@ssl_required
 def api_setup():
     global blog_title_global
     global needs_setup
@@ -80,22 +97,24 @@ def api_post():
 
 """ Serves a page where users can log in. """
 @app.route("/login")
+@ssl_required
 def login():
     return render_template("login.html", blog_title=blog_title_global)
 
 """ Serves the setup page. This page will in turn call "/api/setup". """
 @app.route("/setup")
+@ssl_required
 def setup():
     return render_template("setup.html", blog_title="Setup")
 
-""" Gets all blog-posts from database, then serves them in a page. """
+""" Gets 10 blog-posts from database, then serves them in a page. """
 @app.route("/")
 def blog_main():
     if needs_setup:
         return redirect("/setup")
     result = []
-    for post in Blogpost.query.all():
-        result.append((post.title, post.post, post.date))
+    for post in Blogpost.query.limit(10):
+        result.append((post.id, post.title, post.post, post.date))
 
     return render_template("index.html", content=result,
             blog_title=blog_title_global)
