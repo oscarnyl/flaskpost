@@ -1,0 +1,67 @@
+""" api.py: Contains all API-paths. """
+#TODO: Make API client-agnostic
+from flaskpost import app, login_manager, db, ConfigSingleton
+from flaskpost.model import Blogpost, Metadata, User
+from flaskpost.decorators import ssl_required
+
+from flask import request, redirect
+from flask_login import login_required, login_user, logout_user
+from passlib.hash import sha256_crypt
+
+""" Flask-Login needs this to load users properly. """
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+""" Checks credentials, then logs in user if correct. """
+@app.route("/api/login", methods=["POST"])
+@ssl_required
+def api_login():
+    username = request.form["username"]
+    password = request.form["password"]
+
+    user = User.query.filter_by(username=username).first()
+    if sha256_crypt.verify(password, user.password):
+        login_user(user)
+        return redirect("/")
+    else:
+        return abort(401)
+
+""" Logs out the currently logged in user. """
+@app.route("/api/logout")
+@login_required
+def api_logout():
+    logout_user()
+    return redirect("/")
+
+""" Saves settings to database metadata table, then redirects to main. """
+@app.route("/api/setup", methods=["POST"])
+@ssl_required
+def api_setup():
+    blog_title = request.form["blog_title"]
+    admin_username = request.form["admin_username"]
+    admin_password = request.form["admin_password"]
+
+    db.session.add(Metadata("blog_title", blog_title))
+    db.session.add(Metadata("setup_reverse_canary", "present"))
+    db.session.add(User(admin_username, admin_password))
+    db.session.commit()
+
+    config = ConfigSingleton()
+    config.update(blog_title, False)
+
+    return redirect("/")
+
+""" Inserts a post into the database, then redirects to the blog front page.
+    Blogpost data is retrieved through a web form (served at /post), with a
+    timestamp generated inside the function. """
+@app.route("/api/post", methods=["POST"])
+@login_required
+def api_post():
+    title = request.form["title"]
+    postbody = request.form["postbody"]
+
+    db.session.add(Blogpost(title, postbody))
+    db.session.commit()
+
+    return redirect("/")
