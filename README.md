@@ -26,7 +26,7 @@ All of the above can be installed through pip:
 4. Expand setup and make it work properly (done)
 5. Add an administration page
 6. Add "staggered" post loading
-7. Refactor the project from single module to package
+7. Refactor the project from single module to package (done)
 8. Make the entire thing look better
 
 ## A warning that must be heeded
