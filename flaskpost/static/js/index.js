@@ -12,7 +12,6 @@ document.querySelector("#load_more").addEventListener("click", function() {
             data.map( function (post) {
                 var element = document.createElement("div");
                 element.setAttribute("class", "blogpost");
-                /* TODO: Format this appropriately */
                 var title = document.createElement("h3");
                 title.appendChild(document.createTextNode(post[1]));
                 var post_body = document.createElement("p");
