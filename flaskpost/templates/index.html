@@ -2,8 +2,11 @@
 {% block title %}{{ blog_title_global }}{% endblock %}
 {% block content %}
 {% for (id, title, post, date) in content %}
-<h3>{{ title }}</h3><br/>
-{{ post }}<br/><br/>
-<h6>Post #{{ id }}. Posted {{ date }}</h6><br/>
+<div class="blogpost"><h3>{{ title }}</h3>
+    <p>{{ post }}</p>
+<h6>Post #{{ id }}. Posted {{ date }}</h6></div>
 {% endfor %}
+<div id="additional_posts"></div>
+<button id="load_more">Load more</button>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}

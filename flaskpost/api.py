@@ -7,11 +7,22 @@ from flaskpost.decorators import ssl_required
 from flask import request, redirect
 from flask_login import login_required, login_user, logout_user
 from passlib.hash import sha256_crypt
+import json
 
 """ Flask-Login needs this to load users properly. """
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
+@app.route("/api/more_posts", methods=["POST"])
+def api_more_posts():
+    current_limit = request.get_json()["current_limit"] + 1
+    result = []
+    posts = Blogpost.query.all()
+    filtered_posts = [post for post in posts if post.id >= current_limit and post.id <= current_limit + 10]
+    for post in filtered_posts:
+        result.append((post.id, post.title, post.post, post.date))
+    return json.JSONEncoder().encode(result)
 
 """ Checks credentials, then logs in user if correct. """
 @app.route("/api/login", methods=["POST"])
