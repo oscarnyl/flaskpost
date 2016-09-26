@@ -41,3 +41,10 @@ def blog_post():
     if config.needs_setup:
         return redirect("/setup")
     return render_template("post.html", blog_title=config.title)
+
+@app.route("/admin")
+@login_required
+def blog_administrate():
+    if config.needs_setup:
+        return redirect("/setup")
+    return render_template("admin.html", blog_title=config.title)

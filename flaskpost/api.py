@@ -76,3 +76,13 @@ def api_post():
     db.session.commit()
 
     return redirect("/")
+
+@app.route("/api/admin", methods=["POST"])
+@login_required
+def api_admin():
+    title = request.form["blog_title"]
+
+    config = ConfigSingleton()
+    config.update(title, False)
+
+    return redirect("/")

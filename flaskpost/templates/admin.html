@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ blog_title }}{% endblock %}
+{% block content %}
+<form action="/api/admin" method="post">
+    <label>Blog title:
+        <input type="text" name="blog_title" id="blog_title" value="{{
+        blog_title }}" />
+    </label><br/>
+    <input type="submit" value="Update settings" />
+</form>
+{% endblock %}
