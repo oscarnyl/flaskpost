@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ blog_title_global }}{% endblock %}
+{% block title %}{{ blog_title }}{% endblock %}
 {% block content %}
 <form action="/api/post" method="post">
     <label>Title: <input type="text" name="title" id="title" /></label><br/>
