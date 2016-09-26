@@ -16,6 +16,7 @@ db.create_all()
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+""" Singleton to load and contain the configuration of the blog. """
 class ConfigSingleton:
     class __ConfigSingleton:
         needs_setup = None
@@ -37,11 +38,12 @@ class ConfigSingleton:
         if not ConfigSingleton.instance:
             ConfigSingleton.instance = ConfigSingleton.__ConfigSingleton()
 
+    # Pass all attribute access to the inner class.
     def __getattr__(self, name):
         return getattr(self.instance, name)
 
     def update(self, title, needs_setup):
-        self.instance = ConfigSingleton.__ConfigSingleton
+        ConfigSingleton.instance = ConfigSingleton.__ConfigSingleton(title, needs_setup)
 
 import flaskpost.api
 import flaskpost.paths
