@@ -54,7 +54,7 @@ def api_setup():
     admin_password = request.form["admin_password"]
 
     db.session.add(Metadata("blog_title", blog_title))
-    db.session.add(Metadata("setup_reverse_canary", "present"))
+    db.session.add(Metadata("needs_setup", False))
     db.session.add(User(admin_username, admin_password))
     db.session.commit()
 

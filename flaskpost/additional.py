@@ -2,6 +2,7 @@
 throughout flaskpost. """
 from functools import wraps
 from flask import current_app, redirect, request
+from flaskpost import db
 from flaskpost.model import Metadata
 
 """ Decorator to force SSL on certain requests.
@@ -25,10 +26,13 @@ class ConfigSingleton:
         title = None
         def __init__(self, title=None, needs_setup=None):
             if title == None and needs_setup == None:
-                #TODO: This is an ugly hack. It needs to be replaced
-                self.needs_setup =\
-                (Metadata.query.filter_by(key="setup_reverse_canary").first() ==\
-                None)
+                if Metadata.query.filter_by(key="needs_setup").first() is None:
+                    db.session.add(Metadata("needs_setup", True))
+                    self.needs_setup = True
+                else:
+                    self.needs_setup =\
+                    Metadata.query.filter_by(key="needs_setup").first()
+
                 if not self.needs_setup:
                     self.title =\
                     Metadata.query.filter_by(key="blog_title").first().value
