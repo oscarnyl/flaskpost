@@ -25,6 +25,7 @@ class ConfigSingleton:
         title = None
         def __init__(self, title=None, needs_setup=None):
             if title == None and needs_setup == None:
+                #TODO: This is an ugly hack. It needs to be replaced
                 self.needs_setup =\
                 (Metadata.query.filter_by(key="setup_reverse_canary").first() ==\
                 None)
