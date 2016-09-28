@@ -1,8 +1,8 @@
 """ api.py: Contains all API-paths. """
 #TODO: Make API client-agnostic
-from flaskpost import app, login_manager, db, ConfigSingleton
+from flaskpost import app, login_manager, db
 from flaskpost.model import Blogpost, Metadata, User
-from flaskpost.decorators import ssl_required
+from flaskpost.additional import ssl_required, ConfigSingleton
 
 from flask import request, redirect
 from flask_login import login_required, login_user, logout_user

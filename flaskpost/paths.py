@@ -2,8 +2,8 @@
 from flask import render_template, redirect
 from flask_login import login_required
 
-from flaskpost import app, ConfigSingleton
-from flaskpost.decorators import ssl_required
+from flaskpost import app
+from flaskpost.additional import ssl_required, ConfigSingleton
 from flaskpost.model import Blogpost
 
 config = ConfigSingleton()
