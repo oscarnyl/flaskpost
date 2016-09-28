@@ -47,4 +47,3 @@ class ConfigSingleton:
 
 import flaskpost.api
 import flaskpost.paths
-import flaskpost.decorators
