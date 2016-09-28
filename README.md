@@ -22,7 +22,7 @@ All of the above can be installed through pip:
 2. Add a login system (done)
 3. Require authorization from said login system to make posts (done)
 4. Expand setup and make it work properly (done)
-5. Add an administration page
+5. Add an administration page (in progress)
 6. Add additional post loading (done)
 7. Refactor the project from single module to package (done)
 8. Make the entire thing look better
